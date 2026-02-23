@@ -1,73 +1,84 @@
 import streamlit as st
 import pandas as pd
 
+# Configuração visual
 st.set_page_config(page_title="Porto Conectado", layout="wide")
 
-# Função para ler a planilha (Substitua pelo seu link)
+# Função para conectar à planilha
 def carregar_dados(url):
     try:
-        csv_url = url.replace('/edit?usp=sharing', '/export?format=csv')
+        # Converte link de visualização para link de download CSV direto
+        csv_url = url.replace('/edit?usp=sharing', '/export?format=csv').replace('/edit#gid=', '/export?format=csv&gid=')
         return pd.read_csv(csv_url)
     except:
         return None
 
-st.title("⚓ Sistema de Consulta e Gate")
+# Título do App
+st.title("⚓ Sistema de Gestão Portuária")
+st.markdown("---")
 
-# --- COLE O SEU LINK DA PLANILHA AQUI ---
-url_planilha = "URL_DA_SUA_PLANILHA"
+# --- INSIRA SEU LINK ABAIXO ---
+url_planilha = "COLE_AQUI_O_LINK" 
 
 df = carregar_dados(url_planilha)
 
-if df is not None:
-    busca_booking = st.text_input("🔍 Digite o Número do Booking (Ex: BO-002):")
+# Interface de Busca
+busca = st.text_input("🔍 Consultar Booking (ex: BO-002):")
 
-    if busca_booking:
-        # Filtra na coluna exata que você passou
-        resultado = df[df['Número de booking'] == busca_booking]
-
+if busca:
+    if df is not None:
+        # Filtra os dados
+        resultado = df[df['Número de booking'].astype(str) == busca]
+        
         if not resultado.empty:
-            st.success("✅ Booking Localizado!")
             d = resultado.iloc[0]
+            st.success(f"✅ Booking {busca} localizado!")
 
-            # --- ORGANIZAÇÃO DAS INFORMAÇÕES CONFORME SUA PLANILHA ---
-            col1, col2, col3 = st.columns(3)
-            
+            # Organização em colunas para facilitar a leitura no celular
+            col1, col2 = st.columns(2)
+
             with col1:
-                st.subheader("🚛 Transporte")
-                st.write(f"**Motorista:** {d['Nome do motorista']}")
-                st.write(f"**Cavalo:** {d['Cavalo']}")
-                st.write(f"**Transportadora:** {d['Transportadora']}")
-                st.write(f"**Placas Carreta:** {d['Placa da carreta 1']} / {d['Placa da carreta 2']}")
+                with st.expander("🚚 Dados de Transporte", expanded=True):
+                    st.write(f"**Motorista:** {d['Nome do motorista']}")
+                    st.write(f"**CNH:** {d['CNH']}")
+                    st.write(f"**Cavalo:** {d['Cavalo']}")
+                    st.write(f"**Placas Carreta:** {d['Placa da carreta 1']} / {d['Placa da carreta 2']}")
+                    st.write(f"**Transportadora:** {d['Transportadora']}")
+
+                with st.expander("⚖️ Carga e Pesos", expanded=True):
+                    st.write(f"**Container:** {d['Conteiner/Refência']}")
+                    st.write(f"**Navio:** {d['Navio']}")
+                    st.write(f"**Peso Bruto:** {d['Peso bruto (KG)']} KG")
+                    st.write(f"**Peso Líquido:** {d['Peso líquido (KG)']} KG")
 
             with col2:
-                st.subheader("📦 Carga e Pesos")
-                st.write(f"**Container:** {d['Conteiner/Refência']}")
-                st.write(f"**Navio:** {d['Navio']}")
-                st.write(f"**Peso Bruto:** {d['Peso bruto (KG)']} KG")
-                st.write(f"**Peso Líquido:** {d['Peso líquido (KG)']} KG")
+                with st.expander("🔒 Segurança e Documentos", expanded=True):
+                    st.write(f"**Lacre SIF:** {d['Lacre SIF']}")
+                    st.write(f"**Lacre de Lona:** {d['Lacre de Lona']}")
+                    st.write(f"**Nota Fiscal:** {d['Nota Fiscal']}")
+                    st.write(f"**IMO:** {d['Carga IMO']}")
+                
+                with st.expander("📏 Dimensões Excedentes"):
+                    st.write(f"**Altura:** {d['Ex. Altura (cm)']} | **Frente:** {d['Ex. Frente (cm)']}")
+                    st.write(f"**Atrás:** {d['Ex. atrás (cm)']} | **Laterais:** E:{d['Ex. Esquerda (cm)']} / D:{d['Ex Direita (cm)']}")
 
-            with col3:
-                st.subheader("🔒 Segurança e Medidas")
-                st.write(f"**Lacre SIF:** {d['Lacre SIF']}")
-                st.write(f"**Lacre Lona:** {d['Lacre de Lona']}")
-                st.write(f"**NF:** {d['Nota Fiscal']}")
-                st.write(f"**Carga IMO:** {d['Carga IMO']}")
-
+            # Botão de Ação para o Gate
             st.divider()
-            
-            # --- ÁREA DO GATE (SUGESTÃO DE REGISTRO) ---
-            st.subheader("📝 Registro de Entrada (Gate)")
-            c_gate1, c_gate2 = st.columns(2)
-            lacre_conf = c_gate1.text_input("Confirme o Lacre Físico na entrada")
-            avaria = c_gate2.selectbox("Avarias?", ["Não", "Sim - Amassado", "Sim - Rasgado/Furado"])
-            
-            if st.button("CONFIRMAR ENTRADA NO PORTO"):
+            if st.button("🚩 REGISTRAR ENTRADA NO GATE", use_container_width=True):
                 st.balloons()
-                st.success(f"Entrada do Booking {busca_booking} registrada às {st.session_state.get('hora_atual', 'agora')}!")
+                st.info(f"Entrada confirmada para o Booking {busca}. Status atualizado na operação.")
         else:
-            st.error("❌ Booking não encontrado. Verifique se digitou corretamente (ex: BO-001).")
-else:
-    st.info("💡 Por favor, conecte o link da sua planilha no código para visualizar os dados.")
+            st.error("❌ Este Booking não consta na planilha.")
+    else:
+        st.warning("⚠️ Erro ao conectar com a planilha. Verifique o link no código.")
+
+# Mural de Comunicação (Extra)
+with st.sidebar:
+    st.header("💬 Mural de Avisos")
+    msg = st.text_input("Aviso rápido:")
+    if st.button("Postar"):
+        st.toast(f"Aviso enviado: {msg}")
+
 
     
 
