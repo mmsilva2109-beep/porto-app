@@ -18,7 +18,7 @@ st.title("⚓ Sistema de Gestão Portuária")
 st.markdown("---")
 
 # --- INSIRA SEU LINK ABAIXO ---
-url_planilha = "https://sesisenaispedu-my.sharepoint.com/:x:/g/personal/guilherme_siska_senaisp_edu_br/IQDSSHUP4ZNzR6_f4AmnwrycAZ63Cc2rZyK_9oQjI1wWmXY?e=hMAaNF" 
+url_planilha = "https://docs.google.com/spreadsheets/d/15zVrF4-xy4sSb2WNG2asPEi2LKLuSCXxhqOBGSpEmAc/edit?usp=drivesdk" 
 
 df = carregar_dados(url_planilha)
 
