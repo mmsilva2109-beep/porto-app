@@ -1,19 +1,16 @@
-import streamlit as st
-import pandas as pd
-
-# Configuração visual
-st.set_page_config(page_title="Porto Conectado", layout="wide")
-
-# FUNÇÃO CORRIGIDA
 def carregar_dados(url):
     try:
-        # Extrai o ID da planilha e força o formato de exportação CSV
+        # Extrai o ID da planilha
         id_planilha = url.split("/d/")[1].split("/")[0]
-        csv_url = f"https://docs.google.com/spreadsheets/d/{id_planilha}/export?format=csv"
+        # Força o download da primeira aba (gid=0) como CSV
+        csv_url = f"https://docs.google.com/spreadsheets/d/{id_planilha}/export?format=csv&gid=0"
+        
+        # O storage_options ajuda a evitar bloqueios de robôs
         return pd.read_csv(csv_url)
     except Exception as e:
-        st.error(f"Erro técnico: {e}")
+        st.error(f"Erro ao ler a planilha: {e}")
         return None
+
 
 # Título do App
 st.title("⚓ Sistema de Gestão Portuária")
