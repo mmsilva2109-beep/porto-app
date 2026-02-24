@@ -1,21 +1,23 @@
+import streamlit as st
+import pandas as pd
+
+# Configuração visual
+st.set_page_config(page_title="Porto Conectado", layout="wide")
+
+# Função para conectar à planilha
 def carregar_dados(url):
     try:
-        id_planilha = url.split("/d/")[1].split("/")[0]
-        csv_url = f"https://docs.google.com/spreadsheets/d/{id_planilha}/export?format=csv&gid=0"
-        df = pd.read_csv(csv_url)
-        
-        # ESSA LINHA É A MÁGICA: ela limpa espaços vazios nos nomes das colunas
-        df.columns = df.columns.str.strip() 
-        return df
-    except Exception as e:
+        # Converte link de visualização para link de download CSV direto
+        csv_url = url.replace('/edit?usp=sharing', '/export?format=csv').replace('/edit#gid=', '/export?format=csv&gid=')
+        return pd.read_csv(csv_url)
+    except:
         return None
-
 
 # Título do App
 st.title("⚓ Sistema de Gestão Portuária")
 st.markdown("---")
 
-# LINK ATUALIZADO (Certifique-se de que a planilha está como 'Qualquer pessoa com o link')
+# --- INSIRA SEU LINK ABAIXO ---
 url_planilha = "https://docs.google.com/spreadsheets/d/15zVrF4-xy4sSb2WNG2asPEi2LKLuSCXxhqOBGSpEmAc/edit?usp=drivesdk" 
 
 df = carregar_dados(url_planilha)
@@ -76,7 +78,6 @@ with st.sidebar:
     msg = st.text_input("Aviso rápido:")
     if st.button("Postar"):
         st.toast(f"Aviso enviado: {msg}")
-
 
 
     
