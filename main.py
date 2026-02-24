@@ -4,21 +4,23 @@ import pandas as pd
 # Configuração visual
 st.set_page_config(page_title="Porto Conectado", layout="wide")
 
-# Função para conectar à planilha
+# FUNÇÃO CORRIGIDA
 def carregar_dados(url):
     try:
-        # Converte link de visualização para link de download CSV direto
-        csv_url = url.replace('/edit?usp=sharing', '/export?format=csv').replace('/edit#gid=', '/export?format=csv&gid=')
+        # Extrai o ID da planilha e força o formato de exportação CSV
+        id_planilha = url.split("/d/")[1].split("/")[0]
+        csv_url = f"https://docs.google.com/spreadsheets/d/{id_planilha}/export?format=csv"
         return pd.read_csv(csv_url)
-    except:
+    except Exception as e:
+        st.error(f"Erro técnico: {e}")
         return None
 
 # Título do App
 st.title("⚓ Sistema de Gestão Portuária")
 st.markdown("---")
 
-# --- INSIRA SEU LINK ABAIXO ---
-url_planilha = "https://docs.google.com/spreadsheets/d/15zVrF4-xy4sSb2WNG2asPEi2LKLuSCXxhqOBGSpEmAc/edit?usp=drivesdk" 
+# LINK ATUALIZADO (Certifique-se de que a planilha está como 'Qualquer pessoa com o link')
+url_planilha = "https://docs.google.com/spreadsheets/d/15zVrF4-xy4sSb2WNG2asPEi2LKLuSCXxhqOBGSpEmAc/edit?usp=sharing" 
 
 df = carregar_dados(url_planilha)
 
