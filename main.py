@@ -20,7 +20,7 @@ st.title("⚓ Sistema de Gestão Portuária")
 st.markdown("---")
 
 # LINK ATUALIZADO (Certifique-se de que a planilha está como 'Qualquer pessoa com o link')
-url_planilha = "https://docs.google.com/spreadsheets/d/15zVrF4-xy4sSb2WNG2asPEi2LKLuSCXxhqOBGSpEmAc/edit?usp=sharing" 
+url_planilha = "https://docs.google.com/spreadsheets/d/15zVrF4-xy4sSb2WNG2asPEi2LKLuSCXxhqOBGSpEmAc/edit?usp=drivesdk" 
 
 df = carregar_dados(url_planilha)
 
