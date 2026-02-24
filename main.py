@@ -1,14 +1,13 @@
 def carregar_dados(url):
     try:
-        # Extrai o ID da planilha
         id_planilha = url.split("/d/")[1].split("/")[0]
-        # Força o download da primeira aba (gid=0) como CSV
         csv_url = f"https://docs.google.com/spreadsheets/d/{id_planilha}/export?format=csv&gid=0"
+        df = pd.read_csv(csv_url)
         
-        # O storage_options ajuda a evitar bloqueios de robôs
-        return pd.read_csv(csv_url)
+        # ESSA LINHA É A MÁGICA: ela limpa espaços vazios nos nomes das colunas
+        df.columns = df.columns.str.strip() 
+        return df
     except Exception as e:
-        st.error(f"Erro ao ler a planilha: {e}")
         return None
 
 
