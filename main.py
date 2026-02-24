@@ -20,7 +20,7 @@ def carregar_dados(url):
 st.title("⚓ Sistema de Gestão Portuária")
 st.markdown("---")
 
-url_planilha = "https://docs.google.com/spreadsheets/d/15zVrF4-xy4sSb2WNG2asPEi2LKLuSCXxhqOBGSpEmAc/edit?usp=drivesdk"
+url_planilha = "https://docs.google.com/spreadsheets/d/15zVrF4-xy4sSb2WNG2asPEi2LKLuSCXxhqOBGSpEmAc/edit?usp=sharing"
 df = carregar_dados(url_planilha)
 
 busca = st.text_input("🔍 Consultar Booking (ex: BO-002):")
